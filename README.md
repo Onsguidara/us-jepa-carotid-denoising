@@ -23,36 +23,26 @@ The project is organized as four sequential notebooks:
 
 ### Decoder architectures compared (notebook 04)
 
-- **Model A — Visual Mamba**: selective-scan (state-space) based decoder
-- **Model B — Physics-Informed**: speckle-gating mechanism with a physics-based loss term
-- **Model C — U-Net-style**: residual convolutional decoder with progressive upsampling
-- **Model D — Restormer-style**: transformer decoder using multi-head transposed attention (MDTA) and gated-Dconv feed-forward networks (GDFN)
+- **Model A: Visual Mamba**: selective-scan (state-space) based decoder
+- **Model B: Physics-Informed**: speckle-gating mechanism with a physics-based loss term
+- **Model C: U-Net-style**: residual convolutional decoder with progressive upsampling
+- **Model D: Restormer-style**: transformer decoder using multi-head transposed attention (MDTA) and gated-Dconv feed-forward networks (GDFN)
 
 ## Dataset
 
-- **CUBS** (Carotid Ultrasound Boundary Study) — carotid ultrasound images used for both self-supervised pretraining and (synthetically noised) downstream denoising training.
-- Dataset / checkpoints stored at: `<insert Drive or GitHub link here>`
+- **CUBS** (Carotid Ultrasound Boundary Study): carotid ultrasound images used for both self-supervised pretraining and (synthetically noised) downstream denoising training.
+- Dataset / checkpoints stored at: `(https://drive.google.com/drive/folders/1ta_YtvyfFwvZVhN9ZHeOFQSMSSHL6qlE?usp=drive_link)`
 
 ## Requirements
 
-See `requirements.txt`. Core dependencies: `torch`, `torchvision`, `einops`, `scipy`, `scikit-image`, `matplotlib`, `tqdm`, `pillow`.
+Core dependencies: `torch`, `torchvision`, `einops`, `scipy`, `scikit-image`, `matplotlib`, `tqdm`, `pillow`.
 
 ## How to run
 
-Each notebook was developed and run on Google Colab and includes its own dependency installation cell. Open in Colab or run locally with the dependencies in `requirements.txt`, in the numbered order above (01 → 02 → 03 → 04).
+Each notebook was developed and run on Google Colab / Kaggle and includes its own dependency installation cell. Open in Colab/Kaggle or run locally, in the numbered order above (01 → 02 → 03 → 04).
 
 ## Results
 
 See `04_denoising_decoders_comparison.ipynb` for the full PSNR/SSIM/LPIPS comparison table and qualitative noisy/clean/denoised image grids across all four decoder architectures.
 
-## Authors
 
-- `<intern name(s), affiliation, level of study>`
-
-## Supervision
-
-- Mr. Adel Regim
-
-## License
-
-`<add if applicable>`
