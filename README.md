@@ -41,8 +41,4 @@ Core dependencies: `torch`, `torchvision`, `einops`, `scipy`, `scikit-image`, `m
 
 Each notebook was developed and run on Google Colab / Kaggle and includes its own dependency installation cell. Open in Colab/Kaggle or run locally, in the numbered order above (01 → 02 → 03 → 04).
 
-## Results
-
-See `04_denoising_decoders_comparison.ipynb` for the full PSNR/SSIM/LPIPS comparison table and qualitative noisy/clean/denoised image grids across all four decoder architectures.
-
 
