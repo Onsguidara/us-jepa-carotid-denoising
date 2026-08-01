@@ -8,7 +8,7 @@ Ultrasound images are inherently degraded by speckle noise, which harms both vis
 
 1. Pretrains a self-supervised encoder directly on real (unlabeled) ultrasound data, so it learns anatomically meaningful features without needing any annotations.
 2. Rigorously verifies that the encoder actually learned useful representations (rather than a degenerate shortcut) before using it downstream.
-3. Uses that shared encoder as a frozen/fine-tunable backbone for **four different decoder architectures**, trained on synthetically noised ultrasound images, and compares them on standard image-quality metrics.
+3. Uses that shared encoder as a frozen/fine-tunable backbone for **four different architectures**, trained on synthetically noised ultrasound images, and compares them on standard image-quality metrics.
 
 ## Pipeline
 
