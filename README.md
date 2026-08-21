@@ -20,6 +20,7 @@ The project is organized as four sequential notebooks:
 | `02_usjepa_encoder_evaluation.ipynb` | Representation evaluation | Answers the key question: *did the encoder learn transferable, anatomically meaningful features, or did it find a low-loss shortcut?* Includes embedding visualization (t-SNE, PCA, UMAP), nearest-neighbour retrieval, embedding statistics (variance, cosine similarity, covariance, norms), and a comparison against a randomly-initialized encoder baseline. |
 | `03_usjepa_onevideo_evaluation.ipynb` | Qualitative check | Single-video evaluation of encoder behavior as a focused sanity check. |
 | `04_denoising_decoders_comparison.ipynb` | Downstream task | Uses the shared US-JEPA encoder (frozen or fine-tuned) as backbone for four different decoder architectures, trained to denoise synthetically corrupted ultrasound images (speckle, gaussian, and mixed noise). Compares all four on PSNR, SSIM, and LPIPS. |
+| `05_usjepa_unet_video_inference.ipynb` | Deployment / inference | Loads the trained US-JEPA encoder + Model C (U-Net) decoder from notebook 04 and runs full video inference: frame extraction → preprocessing → per-frame denoising → video reconstruction, with visualization and timing summary. Includes a cross-machine domain-adaptation add-on (CLAHE/histogram matching, tiled full-resolution inference with Hann-window blending, overlay/UI-region masking so on-screen ultrasound text isn't denoised, blend+unsharp postprocessing) plus a PSNR/SSIM/LPIPS ablation comparing model-only vs. blended vs. sharpened output. |
 
 ### Decoder architectures compared (notebook 04)
 
@@ -40,8 +41,8 @@ See [`agent/README.md`](agent/README.md) for setup and usage instructions.
 
 ## Requirements
 - **Notebooks (01–04)**: `torch`, `torchvision`, `einops`, `scipy`, `scikit-image`, `matplotlib`, `tqdm`, `pillow`
+- **Notebook 05 (video inference)**: adds `opencv-python`, `imageio`, `imageio-ffmpeg`, `lpips`
 - **Agent** (`agent/`): see `agent/requirements.txt`
-
 ## How to run
 
 Each notebook was developed and run on Google Colab / Kaggle and includes its own dependency installation cell. Open in Colab/Kaggle or run locally, in the numbered order above (01 → 02 → 03 → 04).
