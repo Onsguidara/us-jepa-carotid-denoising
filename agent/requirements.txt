@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+python-multipart
+torch
+torchvision
+opencv-python-headless
+einops
+numpy

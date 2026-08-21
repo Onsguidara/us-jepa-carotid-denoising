@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+
+# n8n / agent runtime data
+storage/
+*.sqlite
+*.db
+
+# Secrets / env
+.env
+.env.*
+*.env.local
+config/secrets*
+
+# Test artifacts
+testfolder/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Model weights / large binaries (uncomment or adjust if models/ holds trained checkpoints)
+# models/*.pt
+# models/*.pth
+# models/*.onnx

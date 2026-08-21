@@ -1,0 +1,262 @@
+{
+  "name": "denoising_agent_n8n",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "54c11f1a-ac48-4926-b831-603a7c88d224",
+              "name": "=message",
+              "value": "Please analyze the uploaded ultrasound image and explain the denoising result.",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1056,
+        -48
+      ],
+      "id": "91b17e46-682f-40be-92d2-cf07438830b3",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "= {{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "You haveone tool:\n\ndenoise_ultrasound_image(image_url) which denoises the ultrasound image at the given image_url. Call this when an image URL is provided and denoising is requested.\nand returns no-reference quality metrics for the image at image_url.\nWorkflow: when an image_url is given and denoising is requested, call denoise_ultrasound_image first. After denoising. Do not invent metrics.\nAfter denoising, the user may ask follow-up questions about the image, metrics, or request re-processing. ",
+          "passthroughBinaryImages": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1696,
+        -32
+      ],
+      "id": "08c34184-c56e-4a2e-a469-c1f0430a37e5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<html>\n<body style=\"font-family: sans-serif; background:#111; color:#eee; padding:20px;\">\n  <h2>US-JEPA Denoising Result</h2>\n  <img src=\"data:image/png;base64,{{ $node['HTTP Request'].json.denoised_image_base64 }}\" style=\"max-width:600px; border:1px solid #444;\" />\n  <h3>Metrics</h3>\n  <ul>\n    <li>Noise proxy: {{ $node['HTTP Request'].json.metrics.noise_proxy }}</li>\n    <li>Edge energy: {{ $node['HTTP Request'].json.metrics.edge_energy }}</li>\n    <li>Inference time: {{ $node['HTTP Request'].json.metrics.inference_time_sec }}s</li>\n  </ul>\n  <h3>Explanation</h3>\n  <p>{{ $json.output }}</p>\n</body>\n</html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2176,
+        -16
+      ],
+      "id": "f1f1009e-9ce4-4f6d-9faf-f2c05102cdf1",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "denoising",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        816,
+        -64
+      ],
+      "id": "2af88714-6b98-4930-b008-b5c63c49b0af",
+      "name": "Webhook",
+      "webhookId": "05fe66f2-9279-49e7-ac20-e4ad3219254f"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Denoises the ultrasound image at image_url. Returns denoised_image_url and quality metrics. Call this when the user has provided an ultrasound image and wants it denoised.",
+        "method": "POST",
+        "url": "http://host.docker.internal:8000/denoise",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=   {{ JSON.stringify({ image_url: $fromAI('image_url', 'The URL of the ultrasound image to denoise') }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        2000,
+        240
+      ],
+      "id": "62e945a3-a92a-448a-b633-2be2c19eec71",
+      "name": "denoise_ultrasound_image1"
+    },
+    {
+      "parameters": {
+        "model": "openrouter/free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        240
+      ],
+      "id": "212c1971-e698-43ad-9ceb-364e1f738c62",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "l4bqSUSAnWdE83Nj",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8000/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1264,
+        -48
+      ],
+      "id": "cb1c218f-93ad-4714-9d00-1b2633a922a1",
+      "name": "Upload Image"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0bfe1df9-34fe-4d72-8911-13c76faa4fe2",
+              "name": "chatInput",
+              "value": "=  {{ $json.image_url ? \"An ultrasound image has been uploaded and is available at \" + $json.image_url + \". \" : \"\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1456,
+        -32
+      ],
+      "id": "8a3596d2-f91f-4156-b98c-1c7a5d58bec5",
+      "name": "Build Agent Input"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Upload Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "denoise_ultrasound_image1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image": {
+      "main": [
+        [
+          {
+            "node": "Build Agent Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Agent Input": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f4362abc-0b93-4688-b15c-676a1c7e1bb8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0357b163b8438f5d3d7824a5461a40aac5f9d6bd3aaaaee2fb13554635babaae"
+  },
+  "nodeGroups": [],
+  "id": "5bSrfF4V21Zyk05q",
+  "tags": []
+}
